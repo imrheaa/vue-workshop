@@ -5,23 +5,30 @@
         <div>
           <h4 class="title">Netflix Ratings</h4>
           <div class="actions">
-            <button class="btn">Lowest rated</button>
-            <button class="btn">Highest rated</button>
+            <button class="btn" @click="sortbylowest">Lowest rated</button>
+            <button class="btn" @click="sortbyhighest">Highest rated</button>
           </div>
         </div>
         <div class="search">
-          <input type="text" class="form-control" placeholder="Search by title" />
+          <input
+            v-model="searchText"
+            type="text"
+            class="form-control"
+            placeholder="Search by title"
+          />
         </div>
       </div>
       <div class="content">
         <table class="table">
           <thead>
-            <th></th>
+            <tr>
+              <th v-for="(column,index) in columns" :key="index">{{column}}</th>
+            </tr>
           </thead>
           <tbody>
-            <tr>
-              <td></td>
-              <td></td>
+            <tr v-for="(column,index) in filteredMovies" :key="index">
+              <td>{{column.title}}</td>
+              <td>{{column.rating}}</td>
             </tr>
           </tbody>
         </table>
@@ -35,6 +42,7 @@ export default {
   name: "NetflixRatings",
   data: function() {
     return {
+      searchText: "",
       columns: ["title", "rating"],
       ratingsInfo: [
         { title: `Grey's Anatomy`, rating: 98 },
@@ -59,6 +67,22 @@ export default {
         { title: `Marvel's Iron Fist`, rating: 98 }
       ]
     };
+  },
+  computed: {
+    filteredMovies() {
+      return this.ratingsInfo.filter(info => {
+        console.log(info);
+        return info.title.toLowerCase().match(this.searchText.toLowerCase());
+      });
+    }
+  },
+  methods: {
+    sortbylowest() {
+      this.ratingsInfo.sort((a, b) => (a.rating > b.rating ? 1 : -1));
+    },
+    sortbyhighest() {
+      this.ratingsInfo.sort((a, b) => (a.rating < b.rating ? 1 : -1));
+    }
   }
 };
 </script>
